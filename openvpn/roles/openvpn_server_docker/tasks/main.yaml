@@ -1,0 +1,28 @@
+---
+
+- name: Get infos on data volume
+  docker_volume_info:
+    name: "{{ data_vol_name }}"
+  register: result
+
+- name: Does volume exist?
+  debug:
+    msg: "The volume {{ 'exists' if result.exists else 'does not exist' }}"
+
+- name: Create data volume
+  include_tasks: "create_data.yaml"
+  when: not result.exists
+
+- name: Start Container
+  docker_container:
+    name: openvpn-server
+    image: kylemanna/openvpn
+    state: present
+    recreate: yes
+    restart_policy: always
+    capabilities:
+      - "NET_ADMIN"
+    ports:
+      - "1194:1194/udp"
+    volumes:
+      - "{{ data_vol_name }}:/etc/openvpn"

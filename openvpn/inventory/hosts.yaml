@@ -1,0 +1,4 @@
+all:
+  hosts:
+    dev:
+      ansible_ssh_host: bnp-admin-develop.westeurope.cloudapp.azure.com

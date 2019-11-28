@@ -1,0 +1,60 @@
+---
+
+- name: Find my public ip
+  uri:
+    url: http://ifconfig.me/ip
+    return_content: yes
+  register: ip_response
+
+- name: ovpn_genconfig
+  docker_container:
+    name: openvpn-server
+    image: kylemanna/openvpn
+    state: started
+    cleanup: yes
+    detach: no
+    auto_remove: yes
+    command: "ovpn_genconfig -u udp://{{ ip_response.content }}"
+    volumes:
+      - "{{ data_vol_name }}:/etc/openvpn"
+
+- name: ovpn_initpki
+  docker_container:
+    name: openvpn-server
+    image: kylemanna/openvpn
+    state: started
+    cleanup: yes
+    detach: no
+    auto_remove: yes
+    command: "ovpn_initpki"
+    volumes:
+      - "{{ data_vol_name }}:/etc/openvpn"
+
+- name: create client
+  docker_container:
+    name: openvpn-server
+    image: kylemanna/openvpn
+    state: started
+    cleanup: yes
+    detach: no
+    auto_remove: yes
+    command: "easyrsa build-client-full {{ client_name }} nopass"
+    volumes:
+      - "{{ data_vol_name }}:/etc/openvpn"
+
+- name: get client config
+  docker_container:
+    name: openvpn-server
+    image: kylemanna/openvpn
+    state: started
+    cleanup: yes
+    detach: no
+    auto_remove: yes
+    command: "ovpn_getclient {{ client_name }}"
+    volumes:
+      - "{{ data_vol_name }}:/etc/openvpn"
+  register: config
+
+- name: "Save config to your home"
+  local_command:
+    copy content="{{ config.ansible_facts.docker_container.Output }}" dest="~/ovpn_{{ ip_response.content }}.ovpn"
