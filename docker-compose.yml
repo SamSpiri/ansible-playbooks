@@ -3,7 +3,9 @@ services:
   ansible:
     environment:
       USERNAME: spiridonov
+      SSH_AUTH_SOCK: /ssh-agent
     build: .
     volumes:
     - ".:/mnt"
+    - "$SSH_AUTH_SOCK:/ssh-agent"
     - "~:/tmp/root"

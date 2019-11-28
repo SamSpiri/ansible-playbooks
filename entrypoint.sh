@@ -16,11 +16,6 @@ always = yes
 pipelining = True
 EOF
 
-cat > ~/.ssh/config <<EOF
-Host *
-    StrictHostKeyChecking no
-    UserKnownHostsFile=/dev/null
-EOF
 
 useradd -d /home/$USERNAME -m -s /bin/bash $USERNAME
 usermod -aG sudo $USERNAME
@@ -31,5 +26,11 @@ chmod og-rwx -R /home/$USERNAME
 chown $USERNAME:$USERNAME -R /home/$USERNAME
 ln -s /tmp/root/.bash_history /home/$USERNAME/.bash_history
 
-su - $USERNAME
+#cat > /home/spiridonov/.ssh/config <<EOF
+#Host *
+#    StrictHostKeyChecking no
+#    UserKnownHostsFile=/dev/null
+#EOF
+
+su -w SSH_AUTH_SOCK - $USERNAME
 echo Bye...
