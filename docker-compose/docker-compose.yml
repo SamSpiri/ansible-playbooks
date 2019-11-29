@@ -1,0 +1,14 @@
+version: '2.1'
+services:
+  ansible:
+    environment:
+      USERNAME: "$USERNAME"
+      SSH_AUTH_SOCK: /ssh-agent
+    build:
+      context: ..
+      dockerfile: docker-compose/Dockerfile
+      args:
+        USERNAME: "$USERNAME"
+    volumes:
+    - "~:/home/$USERNAME"
+    - "$SSH_AUTH_SOCK:/ssh-agent"

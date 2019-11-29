@@ -38,6 +38,14 @@ RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor |
   && python -m easy_install --upgrade pyOpenSSL \
   && curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
 
-COPY entrypoint.sh /
-WORKDIR /mnt
-ENTRYPOINT ["/entrypoint.sh"]
+ARG USERNAME
+RUN sed -i '/history-search-backward/s/^# //g' /etc/inputrc \
+  && sed -i '/history-search-forward/s/^# //g' /etc/inputrc \
+  && useradd -d /home/$USERNAME -m -s /bin/bash $USERNAME \
+  && usermod -aG sudo $USERNAME
+
+COPY docker-compose/ansible.cfg /etc/ansible/ansible.cfg
+
+USER $USERNAME
+WORKDIR /home/$USERNAME
+ENTRYPOINT ["/bin/bash"]

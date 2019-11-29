@@ -2,10 +2,9 @@ plugin: azure_rm
 auth_source: cli
 include_vm_resource_groups:
   - '*'
-#subscription_id: "OC_Messaging_platform_Dev/Test"
-subscription_id: "fccb80ae-65f9-468d-ae50-8727e618eb0b"
 include_vmss_resource_groups:
   - '*'
 keyed_groups:
   - prefix: tag
     key: tags
+plain_host_names: True
