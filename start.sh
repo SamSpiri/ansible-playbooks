@@ -23,7 +23,7 @@ alias azashow='az account show --query name'
 EOF
 fi
 
-cd docker-compose
+cd start
 if [ "$1" == "build" ]; then
   docker-compose build
   exec $WINPTY docker-compose run --rm ansible

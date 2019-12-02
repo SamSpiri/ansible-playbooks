@@ -4,4 +4,5 @@
   become: yes
   gather_facts: yes
   roles:
+    - { role: docker }
     - { role: openvpn_server_docker }

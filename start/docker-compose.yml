@@ -5,8 +5,7 @@ services:
       USERNAME: "$USERNAME"
       SSH_AUTH_SOCK: /ssh-agent
     build:
-      context: ..
-      dockerfile: docker-compose/Dockerfile
+      context: .
       args:
         USERNAME: "$USERNAME"
     volumes:

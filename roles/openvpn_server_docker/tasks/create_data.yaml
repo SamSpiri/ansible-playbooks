@@ -56,5 +56,5 @@
   register: config
 
 - name: "Save config to your home"
-  local_command:
+  local_action:
     copy content="{{ config.ansible_facts.docker_container.Output }}" dest="~/ovpn_{{ ip_response.content }}.ovpn"
