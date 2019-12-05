@@ -1,0 +1,81 @@
+---
+
+- name: Ensure old versions of Docker are not installed.
+  package:
+    name:
+      - docker
+      - docker-engine
+    state: absent
+
+- name: Ensure depdencies are installed.
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+    state: present
+
+- name: Add Docker apt key.
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    state: present
+  register: add_repository_key
+  ignore_errors: true
+
+- name: Ensure curl is present (on older systems without SNI).
+  package: name=curl state=present
+  when: add_repository_key is failed
+
+- name: Add Docker apt key (alternative for older systems without SNI).
+  shell: "curl -sSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
+  args:
+    warn: no
+  when: add_repository_key is failed
+
+- name: Add Docker repository.
+  apt_repository:
+    repo: "{{ docker_apt_repository }}"
+    state: present
+    update_cache: yes
+
+- name: Install Docker.
+  package:
+    name: '{{ item }}'
+  with_items:
+    - docker-ce
+    - python-docker
+#  register: docker_packeges
+
+- name: Reset ssh connection to load new python modules.
+  meta: reset_connection
+#  when: docker_packages.changed
+
+- name: Install docker-compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+  when: docker_install_compose
+
+#- name: Pip install items
+#  pip:
+#    name: "{{ item }}"
+#    state: latest
+#  with_items:
+#    - docker-py
+#    - docker-compose
+
+- name: Ensure Docker is started and enabled at boot.
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Adding users to group docker
+  user:
+    name: '{{ item }}'
+    groups: docker
+    append: yes
+  with_items: '{{ docker.users }}'
+  when: 'docker is defined and "users" in docker'
+
