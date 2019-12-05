@@ -35,8 +35,8 @@ RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor |
   && apt-add-repository -y ppa:ansible/ansible \
   && apt-get -y install azure-cli kubectl ansible git terraform
 RUN pip install --upgrade cryptography \
-  && pip install --upgrade azure \
-#  && pip install --upgrade azure-cli \
+#  && pip install --upgrade azure \
+  && pip install --upgrade azure-cli \
   && python -m easy_install --upgrade pyOpenSSL \
   && curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
 

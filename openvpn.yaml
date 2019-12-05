@@ -4,5 +4,7 @@
   become: yes
   gather_facts: yes
   roles:
-    - { role: docker }
+    - role: docker
+      vars:
+        route: "10.27.18.0 255.255.254.0"
     - { role: openvpn_server_docker }

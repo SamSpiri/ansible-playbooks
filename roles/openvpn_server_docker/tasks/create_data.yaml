@@ -14,7 +14,7 @@
     cleanup: yes
     detach: no
     auto_remove: yes
-    command: "ovpn_genconfig -u udp://{{ ip_response.content }}"
+    command: "ovpn_genconfig -u udp://{{ ip_response.content }} -d -N -p 'route {{ route }}'"
     volumes:
       - "{{ data_vol_name }}:/etc/openvpn"
 
@@ -26,9 +26,11 @@
     cleanup: yes
     detach: no
     auto_remove: yes
-    command: "ovpn_initpki"
+    command: "ovpn_initpki nopass"
     volumes:
       - "{{ data_vol_name }}:/etc/openvpn"
+    env:
+      EASYRSA_BATCH: "yes"
 
 - name: create client
   docker_container:
@@ -41,6 +43,8 @@
     command: "easyrsa build-client-full {{ client_name }} nopass"
     volumes:
       - "{{ data_vol_name }}:/etc/openvpn"
+    env:
+      EASYRSA_BATCH: "yes"
 
 - name: get client config
   docker_container:
@@ -50,7 +54,7 @@
     cleanup: yes
     detach: no
     auto_remove: yes
-    command: "ovpn_getclient {{ client_name }}"
+    command: "ovpn_getclient {{ client_name }} -e "
     volumes:
       - "{{ data_vol_name }}:/etc/openvpn"
   register: config
