@@ -48,17 +48,22 @@
 
 - name: get client config
   docker_container:
-    name: openvpn-server
+    name: openvpn-server-get-conf
     image: kylemanna/openvpn
     state: started
     cleanup: yes
     detach: no
-    auto_remove: yes
-    command: "ovpn_getclient {{ client_name }} -e "
+    #auto_remove: yes
+    command: "ovpn_getclient {{ client_name }} combined -e "
     volumes:
       - "{{ data_vol_name }}:/etc/openvpn"
   register: config
 
 - name: "Save config to your home"
   local_action:
-    copy content="{{ config.ansible_facts.docker_container.Output }}" dest="~/ovpn_{{ ip_response.content }}.ovpn"
+    copy content="{{ config.ansible_facts.docker_container.Output }}" dest="ovpn_{{ ip_response.content }}.ovpn"
+
+- name: delete container - get client config
+  docker_container:
+    name: openvpn-server-get-conf
+    state: absent
