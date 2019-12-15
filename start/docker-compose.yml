@@ -11,3 +11,4 @@ services:
     volumes:
     - "~:/home/$USERNAME"
     - "$SSH_AUTH_SOCK:/ssh-agent"
+    - "/etc/hosts:/etc/hosts"
