@@ -2,13 +2,15 @@ version: '2.1'
 services:
   ansible:
     environment:
-      USERNAME: "$USERNAME"
+      USERNAME: "$USER"
       SSH_AUTH_SOCK: /ssh-agent
     build:
       context: .
       args:
-        USERNAME: "$USERNAME"
+        USERNAME: "$USER"
+        UID: "$xUID"
+        GID: "$xGID"
     volumes:
-    - "~:/home/$USERNAME"
+    - "~:/home/$USER"
     - "$SSH_AUTH_SOCK:/ssh-agent"
     - "/etc/hosts:/etc/hosts"

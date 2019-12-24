@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export xUID=$(id -u)
+export xGID=$(id -g)
+
 unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     machine=Linux;;

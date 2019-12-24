@@ -43,9 +43,12 @@ RUN pip install --upgrade cryptography \
 COPY ansible.cfg /etc/ansible/ansible.cfg
 
 ARG USERNAME
+ARG UID
+ARG GID
 RUN sed -i '/history-search-backward/s/^# //g' /etc/inputrc \
   && sed -i '/history-search-forward/s/^# //g' /etc/inputrc \
-  && useradd -d /home/$USERNAME -m -s /bin/bash $USERNAME \
+  && groupadd -g $GID $USERNAME \
+  && useradd -d /home/$USERNAME -m -s /bin/bash -g $GID -u $UID $USERNAME \
   && usermod -aG sudo $USERNAME \
   && chmod 666 /etc/ansible/ansible.cfg
 
